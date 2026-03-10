@@ -34,14 +34,7 @@ Windows (PowerShell):
 
 ```powershell
 python -m venv venv
-.\venv\Scripts\Activate.ps1
-```
-
-Windows (cmd):
-
-```cmd
-python -m venv venv
-venv\Scripts\activate.bat
+.\venv\bin\Activate.ps1
 ```
 
 macOS / Linux:
