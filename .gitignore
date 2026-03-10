@@ -1,0 +1,43 @@
+# =========================
+# 1. Python & Environments
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Virtual Environments
+venv/
+.venv/
+env/
+.env
+
+# =========================
+# 2. Machine Learning & Data
+# =========================
+*.h5
+*.keras
+*.hdf5
+*.pt
+*.pth
+
+# =========================
+# 3. Jupyter Notebook
+# =========================
+.ipynb_checkpoints
+
+# =========================
+# 4. OS & IDE
+# =========================
+# Mac
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# VS Code / PyCharm
+.vscode/
+.idea/
+
+.gradio
