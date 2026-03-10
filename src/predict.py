@@ -86,7 +86,12 @@ def predict_wbc(files):
 
     # Model Setup.
     from ultralytics import YOLO
-    model_weights = "best.pt"
+    model_weights = "models/weights/best.pt"
+    
+    if not os.path.exists(model_weights):
+        error_html = f"<h4 style='color: #dc3545; font-family: sans-serif; font-weight: 500;'>Model file '{model_weights}' not found. Please ensure the model weights file is in the correct directory.</h4>"
+        return error_html
+    
     model = YOLO(model_weights)
     #print(f"Model loaded with classes: {model.names}")
     
@@ -132,6 +137,10 @@ def predict_wbc(files):
         filename = os.path.basename(file_path)
         img_b64 = image_to_base64_thumbnail(file_path)
 
+        # Use safe defaults when the model didn't detect any objects
+        display_confidence = float(confidence) if confidence is not None else 0.0
+        display_wbc_class = wbc_class if wbc_class else "Unknown"
+
         # Simulated prediction outcomes
         #dummy_wbc_class = label_name
         #dummy_confidence = 0.85 + (idx % 15) * 0.01
@@ -160,11 +169,11 @@ def predict_wbc(files):
             </div>
             
             <div style="flex-grow: 1; margin-right: 20px;">
-                <h4 style="margin: 0 0 8px 0; color: #222; font-size: 16px;">Type: <span style="color: #007bff;">{wbc_class}</span></h4>
+                <h4 style="margin: 0 0 8px 0; color: #222; font-size: 16px;">Type: <span style="color: #007bff;">{display_wbc_class}</span></h4>
                 <div style="background-color: #f0f0f0; border-radius: 4px; height: 10px; width: 100%; overflow: hidden;">
-                    <div style="background-color: #007bff; border-radius: 4px; height: 100%; width: {confidence * 100}%;"></div>
+                    <div style="background-color: #007bff; border-radius: 4px; height: 100%; width: {display_confidence * 100}%;"></div>
                 </div>
-                <div style="font-size: 13px; color: #555; margin-top: 4px; font-weight: 500;">Confidence: {int(confidence * 100)}%</div>
+                <div style="font-size: 13px; color: #555; margin-top: 4px; font-weight: 500;">Confidence: {int(display_confidence * 100)}%</div>
             </div>
             
             <div style="flex-shrink: 0; padding: 12px; border-radius: 4px; background-color: {status_color}; border: 1px solid {border_color}; width: 220px; text-align: center;">
