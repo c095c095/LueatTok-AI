@@ -1,6 +1,7 @@
 import gradio as gr
 import os
 from src.predict import predict_wbc
+import time
 
 theme = gr.themes.Soft(
     primary_hue="blue",
@@ -10,6 +11,8 @@ theme = gr.themes.Soft(
 )
 
 with gr.Blocks(title="LUEATTOK-AI") as demo:
+    print(f"\n[{time.strftime('%Y-%m-%d %H:%M:%S')}] [INFO] Setting up the Gradio interface...")
+
     # Header & Subheader
     gr.Markdown(
         """
@@ -99,7 +102,6 @@ with gr.Blocks(title="LUEATTOK-AI") as demo:
         # Returns: Accumulated State, Gallery Component, File Input Content (cleared)
         return current_files, current_files, None
 
-    print("AJSDLADLJAS")
     # When files are uploaded, add them to state, show in gallery, and clear the upload box
     image_input.upload(
         fn=add_files,
