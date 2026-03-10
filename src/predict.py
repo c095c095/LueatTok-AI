@@ -3,6 +3,7 @@ import base64
 import os
 from PIL import Image
 from io import BytesIO
+import cv2
 
 def image_to_base64_thumbnail(img_path, max_size=(100, 100)):
     try:
@@ -23,8 +24,6 @@ def image_to_base64_thumbnail(img_path, max_size=(100, 100)):
         print(f"Error creating thumbnail for {img_path}: {e}")
         return ""
 
-import cv2
-import numpy as np
 
 def crop_and_label_objects(result):
     """
