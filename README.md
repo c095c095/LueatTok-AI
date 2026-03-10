@@ -4,7 +4,7 @@
 
 ## โครงสร้างโปรเจกต์
 
-```
+```text
 LUEATTOK-AI/
 ├── app.py                 # UI (Gradio)
 ├── requirements.txt      # รายการ dependencies
@@ -15,6 +15,7 @@ LUEATTOK-AI/
 ```
 
 ## ข้อกำหนด (Prerequisites)
+
 - Python 3.10 หรือ 3.11
 - Git (ถ้าต้องการ clone และ push ขึ้น GitHub)
 - (optional) GPU + CUDA/cuDNN เมื่อต้องการรัน TensorFlow บน GPU
@@ -33,8 +34,8 @@ cd LueatTok-AI
 Windows (PowerShell):
 
 ```powershell
-python -m venv venv
-.\venv\bin\Activate.ps1
+py -m venv venv
+.\venv\Scripts\Activate.ps1
 ```
 
 macOS / Linux:
@@ -65,7 +66,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-เมื่อรันสำเร็จ Gradio จะแจ้ง URL (เช่น http://127.0.0.1:7860) เพื่อเปิดใช้งานในเบราว์เซอร์
+เมื่อรันสำเร็จ Gradio จะแจ้ง URL (เช่น <http://127.0.0.1:7860>) เพื่อเปิดใช้งานในเบราว์เซอร์
 
 หากต้องการระบุพอร์ต (ขึ้นอยู่กับ `app.py`):
 
@@ -88,6 +89,7 @@ print(result)
 ดูรายละเอียดและชื่อฟังก์ชันจริงได้ที่ [src/predict.py](src/predict.py)
 
 ## ตรวจสอบและแก้ปัญหาเบื้องต้น
+
 - ติดตั้งไม่ผ่าน: ตรวจสอบเวอร์ชัน Python และสร้าง venv ใหม่
 - TensorFlow ไม่พบ GPU: ตรวจสอบไดรเวอร์ CUDA/cuDNN และเวอร์ชันที่รองรับ
 - พอร์ต Gradio ถูกใช้งาน: ปิด process ที่ใช้พอร์ตหรือเปลี่ยนพอร์ต
