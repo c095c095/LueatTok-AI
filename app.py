@@ -98,7 +98,8 @@ with gr.Blocks(title="LUEATTOK-AI") as demo:
                     current_names.append(name)
         # Returns: Accumulated State, Gallery Component, File Input Content (cleared)
         return current_files, current_files, None
-        
+
+    print("AJSDLADLJAS")
     # When files are uploaded, add them to state, show in gallery, and clear the upload box
     image_input.upload(
         fn=add_files,

@@ -23,7 +23,57 @@ def image_to_base64_thumbnail(img_path, max_size=(100, 100)):
         print(f"Error creating thumbnail for {img_path}: {e}")
         return ""
 
+import cv2
+import numpy as np
+
+def crop_and_label_objects(result):
+    """
+    Extracts bounding boxes from a YOLO result, crops them from the clean image,
+    and grabs the associated class labels.
+    
+    Args:
+        result: A single Ultralytics Results object.
+        
+    Returns:
+        list: A list of dictionaries, each containing the cropped image array, 
+              the class ID (int), and the class name (string).
+    """
+    extracted_data = []
+    
+    # Get the clean original image and convert to RGB
+    orig_img_rgb = cv2.cvtColor(result.orig_img, cv2.COLOR_BGR2RGB)
+    
+    # Get the dictionary mapping class IDs to class names (e.g., {0: 'cell_x', 1: 'cell_y'})
+    class_names = result.names
+    
+    for box in result.boxes:
+        # 1. Get coordinates
+        x1, y1, x2, y2 = map(int, box.xyxy[0])
+        
+        # 2. Get the label
+        # box.cls[0] is a tensor, so we use .item() to get the raw Python number, then cast to int
+        class_id = int(box.cls[0].item()) 
+        class_name = class_names[class_id]
+        
+        # 3. Crop the image
+        crop = orig_img_rgb[y1:y2, x1:x2]
+
+        conf_decimal = box.conf[0].item()
+        
+        # 4. Store them together if the crop is valid
+        if crop.size > 0:
+            extracted_data.append({
+                "image": crop,
+                "class_id": class_id,
+                "class_name": class_name,
+                "confidence": conf_decimal
+            })
+            
+    return extracted_data
+
+
 def predict_wbc(files):
+
     """
     Placeholder function. Receives a list of image files.
     Returns an HTML string visualizing batch prediction results.
@@ -33,6 +83,13 @@ def predict_wbc(files):
         return error_html
 
     # Simulate AI processing time
+
+    # Model Setup.
+    from ultralytics import YOLO
+    model_weights = "best.pt"
+    model = YOLO(model_weights)
+    #print(f"Model loaded with classes: {model.names}")
+    
     time.sleep(1.5)
 
     html_content = "<div style='display: flex; flex-direction: column; gap: 15px; margin-top: 10px;'>"
@@ -43,13 +100,41 @@ def predict_wbc(files):
             file_path = file_obj.name
         else:
             file_path = str(file_obj)
-            
+
+        # Model Predicting.
+        results = model.predict(file_path)
+        wbc_class = None
+        confidence = None
+        for i, r in enumerate(results):
+
+            detected_objects = crop_and_label_objects(r)
+            print(f"\n--- Image {i+1}: Found {len(detected_objects)} objects ---")
+
+            for j, obj_data in enumerate(detected_objects):
+                    
+                # Unpack the dictionary
+                crop_array = obj_data["image"]
+                label_id = obj_data["class_id"]
+                wbc_class = obj_data["class_name"]
+                wbc_class = wbc_class[:1].upper() + wbc_class[1:]
+                label_name = obj_data["class_name"]
+                confidence = obj_data["confidence"]
+                
+                print(f"Object {j+1}: It's a '{label_name}' (Class ID: {label_id})")
+        
+                # Show the image (optional)
+                im = Image.fromarray(crop_array)
+                #im.show() # Uncomment to pop open the images
+        
+                # ---> Pass `crop_array` AND `label_id` to your CNN here <---
+                
+                
         filename = os.path.basename(file_path)
         img_b64 = image_to_base64_thumbnail(file_path)
-        
+
         # Simulated prediction outcomes
-        dummy_wbc_class = "Neutrophil" if idx % 3 != 0 else "Lymphocyte"
-        dummy_confidence = 0.85 + (idx % 15) * 0.01
+        #dummy_wbc_class = label_name
+        #dummy_confidence = 0.85 + (idx % 15) * 0.01
         
         # Alternate anomaly status for simulation
         if idx % 2 == 0:
@@ -75,11 +160,11 @@ def predict_wbc(files):
             </div>
             
             <div style="flex-grow: 1; margin-right: 20px;">
-                <h4 style="margin: 0 0 8px 0; color: #222; font-size: 16px;">Type: <span style="color: #007bff;">{dummy_wbc_class}</span></h4>
+                <h4 style="margin: 0 0 8px 0; color: #222; font-size: 16px;">Type: <span style="color: #007bff;">{wbc_class}</span></h4>
                 <div style="background-color: #f0f0f0; border-radius: 4px; height: 10px; width: 100%; overflow: hidden;">
-                    <div style="background-color: #007bff; border-radius: 4px; height: 100%; width: {dummy_confidence * 100}%;"></div>
+                    <div style="background-color: #007bff; border-radius: 4px; height: 100%; width: {confidence * 100}%;"></div>
                 </div>
-                <div style="font-size: 13px; color: #555; margin-top: 4px; font-weight: 500;">Confidence: {int(dummy_confidence * 100)}%</div>
+                <div style="font-size: 13px; color: #555; margin-top: 4px; font-weight: 500;">Confidence: {int(confidence * 100)}%</div>
             </div>
             
             <div style="flex-shrink: 0; padding: 12px; border-radius: 4px; background-color: {status_color}; border: 1px solid {border_color}; width: 220px; text-align: center;">
@@ -91,3 +176,4 @@ def predict_wbc(files):
         
     html_content += "</div>"
     return html_content
+
