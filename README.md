@@ -9,6 +9,7 @@ LUEATTOK-AI/
 ├── app.py                 # UI (Gradio)
 ├── requirements.txt      # รายการ dependencies
 ├── data/                 # ตัวอย่างภาพและ dataset
+├── notebooks/            # ไฟล์ Jupyter Notebook เกี่ยวกับการเทรนโมเดล
 ├── demos/                # วิดีโอตัวอย่าง
 ├── models/               # วางไฟล์น้ำหนักโมเดลที่ฝึกเสร็จแล้วที่นี่
 └── src/                  # โค้ด backend (predict.py, preprocess.py)
